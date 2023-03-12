@@ -20,7 +20,14 @@ const AddUser = ({ onBack, onAddUser }) => {
             lastName,
             balance: 0,
         };
-        await userService.addNewUser(data);
+        let response = await userService.addNewUser(data);
+        if (response.ok) {
+            // Display a success message to the user
+            alert("User added successfully");
+        } else {
+            // Handle errors
+            alert("Error adding user");
+        }
         onAddUser(data);
         onBack();
     };

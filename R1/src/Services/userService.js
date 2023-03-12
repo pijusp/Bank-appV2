@@ -16,13 +16,7 @@ const addNewUser = async (newUser) => {
         },
         body: JSON.stringify(newUser),
     });
-    if (response.ok) {
-        // Display a success message to the user
-        alert("User added successfully");
-    } else {
-        // Handle errors
-        alert("Error adding user");
-    }
+    return response;
 };
 const destroyUser = async (id) => {
     let response = await fetch(`${baseURL}/users/${id}`, {
@@ -37,8 +31,28 @@ const destroyUser = async (id) => {
         alert("Error deleting user");
     }
 };
+const addBalance = async (id, balance) => {
+    return await fetch(`${baseURL}/users/${id}/balance`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ balance: parseInt(balance) }),
+    });
+};
+const removeBalance = async (id, balance) => {
+    return await fetch(`${baseURL}/users/${id}/balance`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ balance: -parseInt(balance) }),
+    });
+};
 export default {
     fetchUsers,
     addNewUser,
     destroyUser,
+    addBalance,
+    removeBalance,
 };

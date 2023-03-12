@@ -14,7 +14,6 @@ const Home = () => {
     useEffect(() => {
         const fetchUsers = async () => {
             const users = await userService.fetchUsers();
-            console.log(users);
             if (!users) {
                 alert("No users found");
             }
@@ -22,9 +21,6 @@ const Home = () => {
         };
         fetchUsers();
     }, [refresh]);
-    // useEffect(() => {
-    //     localStorage.setItem("UserList", JSON.stringify(userList));
-    // }, [userList]);
     const addUserClickHandler = () => {
         setShownPage("add");
     };
@@ -75,9 +71,9 @@ const Home = () => {
                             setFilteredUsers={setFilteredUsers}
                         />
                         <UserList
-                            updateLists={updateLists}
                             list={filteredUsers}
                             onDelete={deleteUser}
+                            setRefresh={setRefresh}
                         />
                     </>
                 )}

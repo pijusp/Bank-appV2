@@ -1,36 +1,48 @@
 import React, { useState } from "react";
 import "./UserList.style.css";
 import UserModal from "./UserModal";
+import userService from "../Services/userService";
 
-const UserList = ({ list, onDelete, updateLists }) => {
-    const [balanceUpdates, setBalanceUpdates] = useState({});
+const UserList = ({ list, onDelete, setRefresh }) => {
+    const [balanceUpdates, setBalanceUpdates] = useState("");
 
     const handleInputChange = (userId, amount) => {
         setBalanceUpdates({ ...balanceUpdates, [userId]: amount });
     };
-
-    const handleBalanceUpdate = (userId, amount) => {
-        let result = list.find((item) => item.id === userId);
-        if (amount < 0 && Math.abs(amount) > result.balance) {
-            alert("We don't give debts!");
+    const handleAddBalance = async (id, balance) => {
+        if (parseInt(balance) <= 0) {
+            alert("Amount must be greater than 0");
+            setBalanceUpdates({ ...balanceUpdates, [id]: "" });
             return;
         }
-        if (amount) {
-            const updatedUsers = list.map((user) =>
-                user.id === userId
-                    ? {
-                          ...user,
-                          balance: user.balance + Number(amount),
-                      }
-                    : user
-            );
-            updateLists(updatedUsers);
-            window.localStorage.setItem(
-                "UserList",
-                JSON.stringify(updatedUsers)
-            );
-            setBalanceUpdates({ ...balanceUpdates, [userId]: "" });
+        let response = await userService.addBalance(id, balance);
+        if (response.ok) {
+            // Refresh the user list
+        } else {
+            // Handle errors
+            alert("Error updating balance");
         }
+        setRefresh((val) => !val);
+        setBalanceUpdates({ ...balanceUpdates, [id]: "" });
+    };
+    const handleRemoveBalance = async (id, balance) => {
+        const user = list.find((user) => user.id === id);
+
+        if (parseInt(balance) > user.balance) {
+            alert("Cannot remove more balance than there is");
+            setBalanceUpdates({ ...balanceUpdates, [id]: "" });
+            return;
+        }
+
+        let response = await userService.removeBalance(id, balance);
+        if (response.ok) {
+            // Refresh the user list
+        } else {
+            // Handle errors
+            alert("Error updating balance");
+        }
+        setRefresh((val) => !val);
+        setBalanceUpdates({ ...balanceUpdates, [id]: "" });
     };
     const [showModal, setShowModal] = useState(false);
     const onCloseModal = () => {
@@ -79,7 +91,7 @@ const UserList = ({ list, onDelete, updateLists }) => {
                                     <button
                                         className="balance-update-btn"
                                         onClick={() =>
-                                            handleBalanceUpdate(
+                                            handleAddBalance(
                                                 user.id,
                                                 balanceUpdates[user.id]
                                             )
@@ -90,9 +102,9 @@ const UserList = ({ list, onDelete, updateLists }) => {
                                     <button
                                         className="balance-update-btn"
                                         onClick={() =>
-                                            handleBalanceUpdate(
+                                            handleRemoveBalance(
                                                 user.id,
-                                                -balanceUpdates[user.id]
+                                                balanceUpdates[user.id]
                                             )
                                         }
                                     >
