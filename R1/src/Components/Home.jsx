@@ -5,38 +5,39 @@ import { dummyUserList } from "./UserData";
 import AddUser from "./AddUser";
 import calculateTotalFunds from "../functions/calculateTotalFunds";
 import FilterUsers from "./FilterUsers";
+import userService from "../Services/userService";
 const Home = () => {
     const [userList, setUserList] = useState(dummyUserList);
     const [filteredUsers, setFilteredUsers] = useState([]);
     const [shownPage, setShownPage] = useState("list");
-
+    const [refresh, setRefresh] = useState(true);
     useEffect(() => {
-        const storedUsers = JSON.parse(
-            localStorage.getItem("UserList") || "[]"
-        );
-        updateLists(storedUsers);
-    }, []);
-    useEffect(() => {
-        localStorage.setItem("UserList", JSON.stringify(userList));
-    }, [userList]);
+        const fetchUsers = async () => {
+            const users = await userService.fetchUsers();
+            console.log(users);
+            if (!users) {
+                alert("No users found");
+            }
+            updateLists(users);
+        };
+        fetchUsers();
+    }, [refresh]);
+    // useEffect(() => {
+    //     localStorage.setItem("UserList", JSON.stringify(userList));
+    // }, [userList]);
     const addUserClickHandler = () => {
         setShownPage("add");
     };
     const showListPage = () => {
         setShownPage("list");
     };
-    const deleteUser = (data) => {
-        // To Index from array i, e user list
-        // Splice that
-        // Update new record
-        const indexToDelete = userList.indexOf(data);
-        const tempList = [...userList];
-        tempList.splice(indexToDelete, 1);
-        alert("User deleted successfully");
-        updateLists(tempList);
+    const deleteUser = async (data) => {
+        await userService.destroyUser(data);
+        setRefresh((val) => !val);
     };
     const addUser = (data) => {
         updateLists([...userList, data]);
+        setRefresh((val) => !val);
     };
     const updateLists = (userList) => {
         setUserList(userList);

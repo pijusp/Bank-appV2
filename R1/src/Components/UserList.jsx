@@ -113,7 +113,7 @@ const UserList = ({ list, onDelete, updateLists }) => {
                                             disabled={user.balance > 0}
                                             type="button"
                                             value="Delete"
-                                            onClick={onDelete}
+                                            onClick={() => onDelete(user.id)}
                                         />
                                     </div>
                                 </td>

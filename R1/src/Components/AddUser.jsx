@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import "./UserForm.style.css";
-import { v4 as uuidv4 } from "uuid";
+import userService from "../Services/userService";
 
 const AddUser = ({ onBack, onAddUser }) => {
     const [firstName, setFirstName] = useState("");
@@ -13,16 +13,15 @@ const AddUser = ({ onBack, onAddUser }) => {
     const onLastNameChangeHandler = (e) => {
         setLastName(e.target.value);
     };
-    const onSubmit = (e) => {
+    const onSubmit = async (e) => {
         e.preventDefault();
         const data = {
-            id: uuidv4(),
-            firstName: firstName,
-            lastName: lastName,
+            firstName,
+            lastName,
             balance: 0,
         };
+        await userService.addNewUser(data);
         onAddUser(data);
-        alert("User added");
         onBack();
     };
     return (
