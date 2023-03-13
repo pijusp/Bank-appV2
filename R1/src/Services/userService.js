@@ -32,7 +32,8 @@ const destroyUser = async (id) => {
     }
 };
 const addBalance = async (id, balance) => {
-    return await fetch(`${baseURL}/users/${id}/balance`, {
+    const encodedId = encodeURI(id);
+    return await fetch(`${baseURL}/users/${encodedId}/balance`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
@@ -41,7 +42,8 @@ const addBalance = async (id, balance) => {
     });
 };
 const removeBalance = async (id, balance) => {
-    return await fetch(`${baseURL}/users/${id}/balance`, {
+    const encodedId = encodeURI(id);
+    return await fetch(`${baseURL}/users/${encodedId}/balance`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",

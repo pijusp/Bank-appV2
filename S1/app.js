@@ -68,9 +68,8 @@ app.delete("/users/:id", (req, res) => {
 //     res.json({ message: { text: "Number was edited", type: "info" } });
 // });
 app.patch("/users/:id/balance", (req, res) => {
-    const userId = parseInt(req.params.id);
+    const userId = decodeURI(req.params.id);
     const amount = parseInt(req.body.balance);
-
     // read the JSON file
     const users = JSON.parse(fs.readFileSync("./data/users.json", "utf8"));
 
