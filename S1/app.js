@@ -39,34 +39,11 @@ app.post("/users", (req, res) => {
 app.delete("/users/:id", (req, res) => {
     let allData = fs.readFileSync("./data/users.json", "utf8");
     allData = JSON.parse(allData);
-    console.log(req.params.id);
     let deletedData = allData.filter((d) => req.params.id !== d.id);
     deletedData = JSON.stringify(deletedData);
     fs.writeFileSync("./data/users.json", deletedData, "utf8");
     res.json({ message: { text: "The user was deleted", type: "danger" } });
 });
-// app.put("/users/:action/:id", (req, res) => {
-//     let allData = fs.readFileSync("./data/users.json", "utf8");
-//     allData = JSON.parse(allData);
-//     let editedData;
-//     if (req.params.action == "add") {
-//         editedData = allData.map((d) =>
-//             req.params.id === d.id
-//                 ? { ...d, number: d.number + req.body.number }
-//                 : { ...d }
-//         );
-//     } else if (req.params.action == "rem") {
-//         editedData = allData.map((d) =>
-//             req.params.id === d.id
-//                 ? { ...d, number: d.number - req.body.number }
-//                 : { ...d }
-//         );
-//     }
-//     editedData = JSON.stringify(editedData);
-//     fs.writeFileSync("./data/users.json", editedData, "utf8");
-
-//     res.json({ message: { text: "Number was edited", type: "info" } });
-// });
 app.patch("/users/:id/balance", (req, res) => {
     const userId = decodeURI(req.params.id);
     const amount = parseInt(req.body.balance);
